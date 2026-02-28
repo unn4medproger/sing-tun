@@ -57,7 +57,7 @@ func (r *autoRedirect) setupNFTables() error {
 			Name:     "output",
 			Table:    table,
 			Hooknum:  nftables.ChainHookOutput,
-			Priority: nftables.ChainPriorityMangle,
+			Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityMangle + 1),
 			Type:     nftables.ChainTypeNAT,
 		})
 		if r.tunOptions.AutoRedirectMarkMode {
@@ -75,7 +75,7 @@ func (r *autoRedirect) setupNFTables() error {
 					Name:     "output_route",
 					Table:    table,
 					Hooknum:  nftables.ChainHookOutput,
-					Priority: nftables.ChainPriorityMangle,
+					Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityMangle + 1),
 					Type:     nftables.ChainTypeRoute,
 				})
 				err = r.nftablesCreateLoopbackReroute(nft, table, chainOutputRoute)
@@ -87,7 +87,7 @@ func (r *autoRedirect) setupNFTables() error {
 				Name:     "output_udp_icmp",
 				Table:    table,
 				Hooknum:  nftables.ChainHookOutput,
-				Priority: nftables.ChainPriorityMangle,
+				Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityMangle + 1),
 				Type:     nftables.ChainTypeRoute,
 			})
 			err = r.nftablesCreateExcludeRules(nft, table, chainOutputUDP)
@@ -115,7 +115,7 @@ func (r *autoRedirect) setupNFTables() error {
 		Name:     "prerouting",
 		Table:    table,
 		Hooknum:  nftables.ChainHookPrerouting,
-		Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityNATDest + 1),
+		Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityNATDest + 2),
 		Type:     nftables.ChainTypeNAT,
 	})
 	err = r.nftablesCreateExcludeRules(nft, table, chainPreRouting)
@@ -134,7 +134,7 @@ func (r *autoRedirect) setupNFTables() error {
 				Name:     "prerouting_filter",
 				Table:    table,
 				Hooknum:  nftables.ChainHookPrerouting,
-				Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityNATDest + 1),
+				Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityNATDest + 2),
 				Type:     nftables.ChainTypeFilter,
 			})
 			err = r.nftablesCreateLoopbackReroute(nft, table, chainPreRoutingFilter)
@@ -146,7 +146,7 @@ func (r *autoRedirect) setupNFTables() error {
 			Name:     "prerouting_udp_icmp",
 			Table:    table,
 			Hooknum:  nftables.ChainHookPrerouting,
-			Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityNATDest + 2),
+			Priority: nftables.ChainPriorityRef(*nftables.ChainPriorityNATDest + 3),
 			Type:     nftables.ChainTypeFilter,
 		})
 		ipProto := &nftables.Set{
